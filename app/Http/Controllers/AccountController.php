@@ -22,8 +22,8 @@ class AccountController extends Controller
         $name = $request->query('name');
 
         AccountAggregate::retrieve($newUuid)
-            ->createAccount(name: $name)
             ->createUser(name: $name)
+            ->createAccount(name: $name)
             ->persist();
         return "Done";
     }
