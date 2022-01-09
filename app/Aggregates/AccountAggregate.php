@@ -54,7 +54,7 @@ class AccountAggregate extends AggregateRoot
 
             $this->recordThat(new NameExistsBefore(name: $name));
 
-            throw CantCreateAccount::throw(type: AccountExceptionType::nameExists);
+            CantCreateAccount::throw(type: AccountExceptionType::nameExistsBefore);
         }
     }
 
@@ -66,7 +66,7 @@ class AccountAggregate extends AggregateRoot
     private function passNameDoesntContainSpaces(string $name):void
     {
         if($this->accountContainSpaces(name: $name)){
-            throw CantCreateAccount::throw(type: AccountExceptionType::containSpace);
+            throw new CantCreateAccount(type: AccountExceptionType::containSpace);
         }
     }
 

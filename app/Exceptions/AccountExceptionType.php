@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 enum AccountExceptionType: string
 {
-    case nameExists = 'This name already exists before!';
+    case nameExistsBefore = 'This name already exists before!';
 
     case containSpace = 'The user name cant contain any spaces!';
 
@@ -19,7 +19,7 @@ enum AccountExceptionType: string
     public function code():int
     {
         return match ($this) {
-            AccountExceptionType::nameExists, AccountExceptionType::containSpace => Response::HTTP_FORBIDDEN,
+            AccountExceptionType::nameExistsBefore, AccountExceptionType::containSpace => Response::HTTP_FORBIDDEN,
         };
     }
 }
