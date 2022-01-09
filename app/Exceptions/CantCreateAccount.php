@@ -7,6 +7,9 @@ use Exception;
 
 class CantCreateAccount extends Exception
 {
+    /**
+     * @param AccountExceptionType $type
+     */
     public function __construct(AccountExceptionType $type)
     {
         parent::__construct(message: $type->message(), code: $type->code());

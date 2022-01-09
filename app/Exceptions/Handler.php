@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use function PHPUnit\Framework\matches;
 
 class Handler extends ExceptionHandler
 {
@@ -40,8 +41,12 @@ class Handler extends ExceptionHandler
     }
     public function render($request, Throwable $e)
     {
-        if( $e instanceof CantCreateAccount)
-            abort(code:$e->getCode(),message: $e->getMessage());
+        if( $e instanceof CantCreateAccount) {
+            return match($request->wantsJson()) {
+                true    =>  response()->json(['message' => $e->getMessage()],status: $e->getCode()),
+                false   =>  abort(code: $e->getCode(), message: $e->getMessage()),
+            };
+        }
         return parent::render($request, $e);
     }
 }
