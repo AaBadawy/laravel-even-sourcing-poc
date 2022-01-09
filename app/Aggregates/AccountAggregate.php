@@ -2,10 +2,13 @@
 
 namespace App\Aggregates;
 
+use App\Exceptions\AccountExceptionType;
+use App\Exceptions\CantCreateAccount;
 use App\Models\Account;
 use App\StorableEvents\AccountCreated;
 use App\StorableEvents\NameExistsBefore;
 use App\StorableEvents\UserCreated;
+use Illuminate\Support\Str;
 use Spatie\EventSourcing\AggregateRoots\AggregateRoot;
 
 class AccountAggregate extends AggregateRoot
@@ -18,6 +21,8 @@ class AccountAggregate extends AggregateRoot
     public function createAccount(string $name): static
     {
         $this->passNameUnique(name: $name);
+
+        $this->passNameDoesntContainSpaces(name: $name);
 
         $this->recordThat(new AccountCreated(name: $name));
 
@@ -43,17 +48,35 @@ class AccountAggregate extends AggregateRoot
      * @return void
      * @throws \Exception
      */
-    private function passNameUnique(string $name): void
+    private function passNameUnique(string $name):void
     {
         if(! $this->accountNameIsUnique(name: $name)){
 
             $this->recordThat(new NameExistsBefore(name: $name));
 
-            throw new \Exception('this name is already exists before, Please Choose another name!',301);
+            throw CantCreateAccount::throw(type: AccountExceptionType::nameExists);
         }
     }
+
+    /**
+     * @param string $name
+     * @return void
+     * @throws CantCreateAccount
+     */
+    private function passNameDoesntContainSpaces(string $name):void
+    {
+        if($this->accountContainSpaces(name: $name)){
+            throw CantCreateAccount::throw(type: AccountExceptionType::containSpace);
+        }
+    }
+
     private function accountNameIsUnique(string $name): bool
     {
         return ! Account::query()->where('name',$name)->exists();
+    }
+
+    private function accountContainSpaces(string $name): bool
+    {
+        return Str::contains(haystack: $name,needles: ' ');
     }
 }

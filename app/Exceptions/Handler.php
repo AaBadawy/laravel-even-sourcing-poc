@@ -38,4 +38,10 @@ class Handler extends ExceptionHandler
             //
         });
     }
+    public function render($request, Throwable $e)
+    {
+        if( $e instanceof CantCreateAccount)
+            abort(code:$e->getCode(),message: $e->getMessage());
+        return parent::render($request, $e);
+    }
 }
