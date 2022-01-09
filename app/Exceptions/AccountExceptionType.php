@@ -5,19 +5,15 @@ namespace App\Exceptions;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
-enum AccountExceptionType
+enum AccountExceptionType: string
 {
-    case nameExists;
+    case nameExists = 'This name already exists before!';
 
-    case containSpace;
+    case containSpace = 'The user name cant contain any spaces!';
 
     public function message():string
     {
-        return match ($this) {
-            AccountExceptionType::nameExists    => 'This name already exists before!',
-
-            AccountExceptionType::containSpace  => 'The user name cant contain any spaces!',
-        };
+        return $this->value;
     }
 
     public function code():int
